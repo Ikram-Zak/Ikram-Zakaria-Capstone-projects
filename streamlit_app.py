@@ -59,7 +59,7 @@ st.write(df)
 
 # Plotting using seaborn
 plt.figure(figsize=(10, 6))
-sns.barplot(x='Airport', y='Num_Departures', data=df, palette='viridis')
+sns.barplot(x='Airport', y='Num_Departures', data=df, hue='Airport', palette='viridis', legend=False)
 plt.xlabel('Airport')
 plt.ylabel('Number of Departures')
 plt.title('Top 5 Departure Airports by Number of Departures')
@@ -79,7 +79,7 @@ st.write(df_top_arrival)
 
 # Plotting using seaborn
 plt.figure(figsize=(10, 6))
-sns.barplot(x='Airport', y='num_arrival', data=df_top_arrival, palette='viridis')
+sns.barplot(x='Airport', y='num_arrival', data=df_top_arrival, hue='Airport', palette='viridis', legend=False)
 plt.xlabel('Airport')
 plt.ylabel('Number of Arrival')
 plt.title('Top 5 Arrival Airports by Number of Arrival')
@@ -98,7 +98,7 @@ st.write(df_top_airline)
 
 # Plotting using seaborn
 plt.figure(figsize=(10, 6))
-sns.barplot(x='Airline', y='num_airline', data=df_top_airline, palette='viridis')
+sns.barplot(x='Airline', y='num_airline', data=df_top_airline, hue='Airline', palette='viridis', legend=False)
 plt.xlabel('Airline')
 plt.ylabel('Number of Arrival')
 plt.title('Top 5 Airline by Number of flight')

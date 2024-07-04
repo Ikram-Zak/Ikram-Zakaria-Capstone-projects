@@ -8,6 +8,9 @@ import psycopg2
 import streamlit_shadcn_ui as ui
 
 
+st.title("🛫 Real-time Flight")
+
+
 ########### Connection to the db
 def db_connection():
     secrets = toml.load('.streamlit/secrets.toml')
@@ -31,7 +34,37 @@ def fetch_data(query):
     conn.close()
     return data
 
-st.title("🛫 Real-time Flight trStatus")
+
+
+
+
+query_nb_flight = 'SELECT COUNT(id) AS total_num_flight FROM student.iz_aviationstack'
+data_nb_flight = fetch_data(query_nb_flight)
+df_nb_flight = pd.DataFrame(data_nb_flight, columns=['total_num_flight'])
+
+query_nb_airport = 'SELECT COUNT(DISTINCT departure_airports) AS unique_airport FROM student.iz_aviationstack'
+data_nb_airport = fetch_data(query_nb_airport)
+df_nb_airport = pd.DataFrame(data_nb_airport, columns=['unique_airport'])
+
+query_nb_airline = 'SELECT COUNT(DISTINCT airline_names) AS unique_airline FROM student.iz_aviationstack'
+data_nb_airline = fetch_data(query_nb_airline)
+df_nb_airline = pd.DataFrame(data_nb_airline, columns=['unique_airline'])
+
+cols = st.columns(3)
+with cols[0]:
+    ui.metric_card(title="Total Flights", content=data_nb_flight[0][0], key="card1")
+with cols[1]:
+    ui.metric_card(title="Total Airport", content=data_nb_airport[0][0], key="card2")
+with cols[2]:
+    ui.metric_card(title="Total Airline", content=data_nb_airline[0][0], key="card3")
+
+
+
+
+
+
+
+
 
 
 
@@ -107,12 +140,5 @@ st.pyplot(plt)  # Display plot in Streamlit
 
 
 
-cols = st.columns(3)
-with cols[0]:
-    ui.metric_card(title="Total Revenue", content="$45,231.89", description="+20.1% from last month", key="card1")
-with cols[1]:
-    ui.metric_card(title="Total Revenue", content="$45,231.89", description="+20.1% from last month", key="card2")
-with cols[2]:
-    ui.metric_card(title="Total Revenue", content="$45,231.89", description="+20.1% from last month", key="card3")
 
 st.balloons()

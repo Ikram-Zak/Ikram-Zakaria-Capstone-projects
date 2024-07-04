@@ -5,7 +5,7 @@ import pandas as pd
 import requests
 import toml
 import psycopg2
-
+import streamlit_shadcn_ui as ui
 
 
 ########### Connection to the db
@@ -104,5 +104,15 @@ plt.ylabel('Number of Arrival')
 plt.title('Top 5 Airline by Number of flight')
 st.pyplot(plt)  # Display plot in Streamlit
 
+
+
+
+cols = st.columns(3)
+with cols[0]:
+    ui.metric_card(title="Total Revenue", content="$45,231.89", description="+20.1% from last month", key="card1")
+with cols[1]:
+    ui.metric_card(title="Total Revenue", content="$45,231.89", description="+20.1% from last month", key="card2")
+with cols[2]:
+    ui.metric_card(title="Total Revenue", content="$45,231.89", description="+20.1% from last month", key="card3")
 
 st.balloons()

@@ -7,8 +7,17 @@ import toml
 import psycopg2
 import streamlit_shadcn_ui as ui
 
+st.set_page_config(
+   page_title="Flight & airport tracker",
+   page_icon="🛫"
+)
 
-st.title("🛫 Real-time Flight")
+
+
+st.title("🛫 Flight tracker & airport tracker")
+###st.markdown("This is some **bold** text.")
+###st.caption('Success')
+
 
 
 ########### Connection to the db
@@ -37,7 +46,6 @@ def fetch_data(query):
 
 
 
-
 query_nb_flight = 'SELECT COUNT(id) AS total_num_flight FROM student.iz_aviationstack'
 data_nb_flight = fetch_data(query_nb_flight)
 df_nb_flight = pd.DataFrame(data_nb_flight, columns=['total_num_flight'])
@@ -50,44 +58,35 @@ query_nb_airline = 'SELECT COUNT(DISTINCT airline_names) AS unique_airline FROM 
 data_nb_airline = fetch_data(query_nb_airline)
 df_nb_airline = pd.DataFrame(data_nb_airline, columns=['unique_airline'])
 
-cols = st.columns(3)
+query_nb_days = 'SELECT COUNT(DISTINCT flight_dates) AS unique_dates FROM student.iz_aviationstack'
+data_nb_days = fetch_data(query_nb_days)
+df_nb_days = pd.DataFrame(data_nb_days, columns=['unique_airline'])
+
+cols = st.columns(4)
 with cols[0]:
-    ui.metric_card(title="Total Flights", content=data_nb_flight[0][0], key="card1")
+    ui.metric_card(title="Total Days", content=data_nb_days[0][0], key="card1")
 with cols[1]:
-    ui.metric_card(title="Total Airport", content=data_nb_airport[0][0], key="card2")
+    ui.metric_card(title="Total Flights", content=data_nb_flight[0][0], key="card2")
 with cols[2]:
-    ui.metric_card(title="Total Airline", content=data_nb_airline[0][0], key="card3")
+    ui.metric_card(title="Total Airport", content=data_nb_airport[0][0], key="card3")
+with cols[3]:
+    ui.metric_card(title="Total Airline", content=data_nb_airline[0][0], key="card4")
+
+
+st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 
 
 
-
-
-
-
-
-
-
-
-### querying data ###
-##query = 'SELECT * FROM student.iz_aviationstack'
-##data = fetch_data(query)
-
-##query2 = 'SELECT departure_airports, COUNT(*) AS num_departures FROM student.iz_aviationstack GROUP BY iz_aviationstack.departure_airports ORDER BY num_departures DESC'
-##data = fetch_data(query2)
-
-##################################
+############## Graphs ####################
 
 query_top_departure = 'SELECT departure_airports, COUNT(*) AS num_departures FROM student.iz_aviationstack GROUP BY departure_airports ORDER BY num_departures DESC LIMIT 3'
 data_top_departure = fetch_data(query_top_departure)
-
-
 # Convert fetched data to Pandas DataFrame
 df = pd.DataFrame(data_top_departure, columns=['Airport', 'Num_Departures'])
 
-
 # Display data as a table
-#st.write("Top 5 Departure Airports:")
-st.write(df)
+###st.write(df)
 
 
 # Plotting using seaborn
@@ -95,29 +94,32 @@ plt.figure(figsize=(10, 6))
 sns.barplot(x='Airport', y='Num_Departures', data=df, hue='Airport', palette='viridis', legend=False)
 plt.xlabel('Airport')
 plt.ylabel('Number of Departures')
-plt.title('Top 5 Departure Airports by Number of Departures')
-st.pyplot(plt)  # Display plot in Streamlit
+plt.title('Top 3 Departure Airports by Number of Departures')
+st.pyplot(plt) 
 
 
+st.markdown("<br>", unsafe_allow_html=True)
 ##################################
 
 query_top_arrival = 'SELECT arrival_airports, COUNT(*) AS num_arrival FROM student.iz_aviationstack GROUP BY arrival_airports ORDER BY num_arrival DESC LIMIT 3'
 data_top_arrival = fetch_data(query_top_arrival)
 
-
 # Convert fetched data to Pandas DataFrame
 df_top_arrival = pd.DataFrame(data_top_arrival, columns=['Airport', 'num_arrival'])
 
-st.write(df_top_arrival)
+###st.write(df_top_arrival)
 
 # Plotting using seaborn
 plt.figure(figsize=(10, 6))
 sns.barplot(x='Airport', y='num_arrival', data=df_top_arrival, hue='Airport', palette='viridis', legend=False)
 plt.xlabel('Airport')
 plt.ylabel('Number of Arrival')
-plt.title('Top 5 Arrival Airports by Number of Arrival')
+plt.title('Top 3 Arrival Airports by Number of Arrival')
+st.markdown("<br>", unsafe_allow_html=True)
 st.pyplot(plt)  # Display plot in Streamlit
 
+
+st.markdown("<br>", unsafe_allow_html=True)
 ##################################
 
 query_top_airline = 'SELECT airline_names, COUNT(*) AS num_airline FROM student.iz_aviationstack GROUP BY airline_names ORDER BY num_airline DESC LIMIT 3'
@@ -127,7 +129,7 @@ data_top_airline = fetch_data(query_top_airline)
 # Convert fetched data to Pandas DataFrame
 df_top_airline = pd.DataFrame(data_top_airline, columns=['Airline', 'num_airline'])
 
-st.write(df_top_airline)
+###st.write(df_top_airline)
 
 # Plotting using seaborn
 plt.figure(figsize=(10, 6))
@@ -136,9 +138,3 @@ plt.xlabel('Airline')
 plt.ylabel('Number of Arrival')
 plt.title('Top 5 Airline by Number of flight')
 st.pyplot(plt)  # Display plot in Streamlit
-
-
-
-
-
-st.balloons()

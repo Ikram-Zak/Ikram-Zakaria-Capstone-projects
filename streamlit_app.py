@@ -76,8 +76,12 @@ with cols[3]:
 st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
 
-
-
+################ All data ##########
+query_all = 'SELECT flight_dates, flight_statuses, flight_number, airline_names, departure_airports, arrival_airports  FROM student.iz_aviationstack'
+data_all = fetch_data(query_all)
+# Convert fetched data to Pandas DataFrame
+df_all = pd.DataFrame(data_all, columns=['Flight Dates', 'Flight Status','Flight Number', 'Airline','Departure Airport', 'Arrival Airport', ])
+st.write(df_all)
 ############## Graphs ####################
 
 query_top_departure = 'SELECT departure_airports, COUNT(*) AS num_departures FROM student.iz_aviationstack GROUP BY departure_airports ORDER BY num_departures DESC LIMIT 3'
@@ -138,3 +142,5 @@ plt.xlabel('Airline')
 plt.ylabel('Number of Arrival')
 plt.title('Top 5 Airline by Number of flight')
 st.pyplot(plt)  # Display plot in Streamlit
+
+

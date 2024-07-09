@@ -1,16 +1,19 @@
 import streamlit as st
 import matplotlib.pyplot as plt
-import seaborn as sns 
+import seaborn as sns
 import pandas as pd
-import requests
 import toml
 import psycopg2
 import streamlit_shadcn_ui as ui
+
 
 st.set_page_config(
    page_title="Flight & airport tracker",
    page_icon="🛫"
 )
+
+
+
 
 
 
@@ -20,9 +23,13 @@ st.title("🛫 Flight tracker & airport tracker")
 
 
 
-########### Connection to the db
+
+
+
+########### Connection to the db #############
 def db_connection():
     secrets = toml.load('.streamlit/secrets.toml')
+
 
     conn = psycopg2.connect(
         database="pagila",
@@ -33,7 +40,9 @@ def db_connection():
     )
     return conn
 
-########### fetching data
+
+########### fetching data #################
+
 
 def fetch_data(query):
     conn = db_connection()
@@ -46,21 +55,28 @@ def fetch_data(query):
 
 
 
+################# metrics on the top #######################
+
+
 query_nb_flight = 'SELECT COUNT(id) AS total_num_flight FROM student.iz_aviationstack'
 data_nb_flight = fetch_data(query_nb_flight)
 df_nb_flight = pd.DataFrame(data_nb_flight, columns=['total_num_flight'])
+
 
 query_nb_airport = 'SELECT COUNT(DISTINCT departure_airports) AS unique_airport FROM student.iz_aviationstack'
 data_nb_airport = fetch_data(query_nb_airport)
 df_nb_airport = pd.DataFrame(data_nb_airport, columns=['unique_airport'])
 
+
 query_nb_airline = 'SELECT COUNT(DISTINCT airline_names) AS unique_airline FROM student.iz_aviationstack'
 data_nb_airline = fetch_data(query_nb_airline)
 df_nb_airline = pd.DataFrame(data_nb_airline, columns=['unique_airline'])
 
+
 query_nb_days = 'SELECT COUNT(DISTINCT flight_dates) AS unique_dates FROM student.iz_aviationstack'
 data_nb_days = fetch_data(query_nb_days)
 df_nb_days = pd.DataFrame(data_nb_days, columns=['unique_airline'])
+
 
 cols = st.columns(4)
 with cols[0]:
@@ -73,24 +89,63 @@ with cols[3]:
     ui.metric_card(title="Total Airline", content=data_nb_airline[0][0], key="card4")
 
 
+
+
 st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
 
-################ All data ##########
-query_all = 'SELECT flight_dates, flight_statuses, flight_number, airline_names, departure_airports, arrival_airports  FROM student.iz_aviationstack'
+
+################ All data for report ##########
+
+
+
+
+query_all = 'SELECT flight_dates, flight_statuses, flight_number, airline_names, departure_airports, arrival_airports FROM student.iz_aviationstack'
 data_all = fetch_data(query_all)
-# Convert fetched data to Pandas DataFrame
-df_all = pd.DataFrame(data_all, columns=['Flight Dates', 'Flight Status','Flight Number', 'Airline','Departure Airport', 'Arrival Airport', ])
-st.write(df_all)
+
+
+df_all = pd.DataFrame(data_all, columns=['flight_dates', 'flight_statuses','flight_number', 'airline_names','departure_airports', 'arrival_airports'])
+
+
+
+
+# Add date range selection
+start_date = st.date_input("Select start date", value=pd.to_datetime('today') - pd.DateOffset(days=3))
+end_date = st.date_input("Select end date", value=pd.to_datetime('today'))
+
+
+# Filter data based on date range
+filtered_data = df_all[
+    (df_all['flight_dates'] >= start_date) &
+    (df_all['flight_dates'] <= end_date)
+]
+
+
+# Display filtered datadsad
+st.header('Flight report')
+st.write(filtered_data)
+##st.write(df_all)
+
+
+
+
 ############## Graphs ####################
+
+
+st.header('Top 3 Departure Airports by Number of Departures')
+
 
 query_top_departure = 'SELECT departure_airports, COUNT(*) AS num_departures FROM student.iz_aviationstack GROUP BY departure_airports ORDER BY num_departures DESC LIMIT 3'
 data_top_departure = fetch_data(query_top_departure)
 # Convert fetched data to Pandas DataFrame
 df = pd.DataFrame(data_top_departure, columns=['Airport', 'Num_Departures'])
 
+
 # Display data as a table
-###st.write(df)
+
+
+
+
 
 
 # Plotting using seaborn
@@ -98,49 +153,71 @@ plt.figure(figsize=(10, 6))
 sns.barplot(x='Airport', y='Num_Departures', data=df, hue='Airport', palette='viridis', legend=False)
 plt.xlabel('Airport')
 plt.ylabel('Number of Departures')
-plt.title('Top 3 Departure Airports by Number of Departures')
-st.pyplot(plt) 
+##plt.title('Top 3 Departure Airports by Number of Departures')
+st.pyplot(plt)
+
+if st.button(f"Top Departure Airports"):
+    st.write(df)
+
 
 
 st.markdown("<br>", unsafe_allow_html=True)
 ##################################
 
+
+st.header('Top 3 Arrival Airports')
+
+
 query_top_arrival = 'SELECT arrival_airports, COUNT(*) AS num_arrival FROM student.iz_aviationstack GROUP BY arrival_airports ORDER BY num_arrival DESC LIMIT 3'
 data_top_arrival = fetch_data(query_top_arrival)
+
 
 # Convert fetched data to Pandas DataFrame
 df_top_arrival = pd.DataFrame(data_top_arrival, columns=['Airport', 'num_arrival'])
 
+
 ###st.write(df_top_arrival)
+
 
 # Plotting using seaborn
 plt.figure(figsize=(10, 6))
 sns.barplot(x='Airport', y='num_arrival', data=df_top_arrival, hue='Airport', palette='viridis', legend=False)
 plt.xlabel('Airport')
 plt.ylabel('Number of Arrival')
-plt.title('Top 3 Arrival Airports by Number of Arrival')
+##plt.title('Top 3 Arrival Airports by Number of Arrival')
 st.markdown("<br>", unsafe_allow_html=True)
 st.pyplot(plt)  # Display plot in Streamlit
 
 
+
+
 st.markdown("<br>", unsafe_allow_html=True)
 ##################################
+st.header('Top 3 Airlines by Number of Departures')
+
 
 query_top_airline = 'SELECT airline_names, COUNT(*) AS num_airline FROM student.iz_aviationstack GROUP BY airline_names ORDER BY num_airline DESC LIMIT 3'
 data_top_airline = fetch_data(query_top_airline)
 
 
+
+
 # Convert fetched data to Pandas DataFrame
 df_top_airline = pd.DataFrame(data_top_airline, columns=['Airline', 'num_airline'])
 
+
 ###st.write(df_top_airline)
+
 
 # Plotting using seaborn
 plt.figure(figsize=(10, 6))
 sns.barplot(x='Airline', y='num_airline', data=df_top_airline, hue='Airline', palette='viridis', legend=False)
 plt.xlabel('Airline')
 plt.ylabel('Number of Arrival')
-plt.title('Top 5 Airline by Number of flight')
+##plt.title('Top 5 Airline by Number of flight')
 st.pyplot(plt)  # Display plot in Streamlit
 
 
+
+
+##################################

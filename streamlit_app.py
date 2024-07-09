@@ -16,9 +16,10 @@ st.set_page_config(
 
 
 st.title("🛫 Flight tracker & airport tracker")
-###st.markdown("This is some **bold** text.")
-###st.caption('Success')
 
+
+image_path = 'images/aviation-night.jpg'
+st.image(image_path, use_column_width=True)
 
 
 

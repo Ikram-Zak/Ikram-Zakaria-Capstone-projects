@@ -15,13 +15,9 @@ st.set_page_config(
 
 
 
-
-
 st.title("🛫 Flight tracker & airport tracker")
 ###st.markdown("This is some **bold** text.")
 ###st.caption('Success')
-
-
 
 
 
@@ -102,31 +98,35 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 query_all = 'SELECT flight_dates, flight_statuses, flight_number, airline_names, departure_airports, arrival_airports FROM student.iz_aviationstack'
 data_all = fetch_data(query_all)
-
-
 df_all = pd.DataFrame(data_all, columns=['flight_dates', 'flight_statuses','flight_number', 'airline_names','departure_airports', 'arrival_airports'])
 
 
+#### Sidebar filter ####
+st.sidebar.subheader("Filter Data")
 
+# Date range selection
+start_date = st.sidebar.date_input("Select start date", value=pd.to_datetime('today') - pd.DateOffset(days=3))
+end_date = st.sidebar.date_input("Select end date", value=pd.to_datetime('today'))
 
-# Add date range selection
-start_date = st.date_input("Select start date", value=pd.to_datetime('today') - pd.DateOffset(days=3))
-end_date = st.date_input("Select end date", value=pd.to_datetime('today'))
+# Airport selection
+unique_airports = ['All Airport']+list(df_all['departure_airports'].unique())
+selected_airport = st.sidebar.selectbox("Select Airport", unique_airports)
 
+# Airline selection
+unique_airlines = ['All Airlines'] + list(df_all['airline_names'].unique())
+selected_airline = st.sidebar.selectbox("Select Airline", unique_airlines)
 
-# Filter data based on date range
+# Filter data based on selections
 filtered_data = df_all[
     (df_all['flight_dates'] >= start_date) &
-    (df_all['flight_dates'] <= end_date)
+    (df_all['flight_dates'] <= end_date) &
+    ((selected_airport == 'All Airport') | (df_all['departure_airports'] == selected_airport)) &
+    ((selected_airline == 'All Airlines') | (df_all['airline_names'] == selected_airline))
 ]
 
-
-# Display filtered datadsad
-st.header('Flight report')
+# Display filtered data or all data if no filter applied
+st.header('Flight Data')
 st.write(filtered_data)
-##st.write(df_all)
-
-
 
 
 ############## Graphs ####################
@@ -188,7 +188,8 @@ plt.ylabel('Number of Arrival')
 st.markdown("<br>", unsafe_allow_html=True)
 st.pyplot(plt)  # Display plot in Streamlit
 
-
+if st.button(f"Top Arrival Airports"):
+    st.write(df_top_arrival)
 
 
 st.markdown("<br>", unsafe_allow_html=True)
@@ -198,15 +199,8 @@ st.header('Top 3 Airlines by Number of Departures')
 
 query_top_airline = 'SELECT airline_names, COUNT(*) AS num_airline FROM student.iz_aviationstack GROUP BY airline_names ORDER BY num_airline DESC LIMIT 3'
 data_top_airline = fetch_data(query_top_airline)
-
-
-
-
-# Convert fetched data to Pandas DataFrame
 df_top_airline = pd.DataFrame(data_top_airline, columns=['Airline', 'num_airline'])
 
-
-###st.write(df_top_airline)
 
 
 # Plotting using seaborn
@@ -217,7 +211,8 @@ plt.ylabel('Number of Arrival')
 ##plt.title('Top 5 Airline by Number of flight')
 st.pyplot(plt)  # Display plot in Streamlit
 
-
+if st.button(f'Top Airlines'):
+    st.write(df_top_airline)
 
 
 ##################################

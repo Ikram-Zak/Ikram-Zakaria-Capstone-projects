@@ -1,14 +1,14 @@
-**Presentation**
+**Presentation:**
 This Streamlit application provides a Flight Tracker and Data Report for analyzing flight data including metrics, top departure and arrival airports, and top airlines.
 
 
-**Features**
+**Features:**
 - Metrics Display: Shows key metrics such as total flights, unique airports, unique airlines, and total days.
 - Data Report: Displays a comprehensive report of flight data with filtering options based on date, airport, and airline.
 - Charts: Visualizes top 3 departure and arrival airports, and top 3 airlines based on flight counts.
 
 
-**How to Use**
+**How to Use:**
 Setup:
    - Clone the repository to your local machine.
    - Install the required dependencies using pip install -r requirements.txt.
@@ -21,7 +21,7 @@ Launch the Streamlit application:
 
 
 
-**Technologies Used**
+**Technologies Used:**
    - Streamlit: Python framework for building interactive web applications.
    - Matplotlib & Seaborn: Libraries for data visualization.
    - Pandas: Data manipulation and analysis.

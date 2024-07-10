@@ -15,7 +15,7 @@ st.set_page_config(
 
 
 
-st.title("🛫 Flight tracker & airport tracker")
+st.title("🛫 Flight Tracker")
 
 
 image_path = 'images/aviation-night.jpg'
@@ -103,7 +103,7 @@ df_all = pd.DataFrame(data_all, columns=['flight_dates', 'flight_statuses','flig
 
 
 #### Sidebar filter ####
-st.sidebar.subheader("Filter Data")
+st.sidebar.subheader("Filter of the Data Report")
 
 # Date range selection
 start_date = st.sidebar.date_input("Select start date", value=pd.to_datetime('today') - pd.DateOffset(days=3))
@@ -126,7 +126,7 @@ filtered_data = df_all[
 ]
 
 # Display filtered data or all data if no filter applied
-st.header('Flight Data')
+st.header('Data report')
 st.write(filtered_data)
 
 

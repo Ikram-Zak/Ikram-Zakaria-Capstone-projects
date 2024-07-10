@@ -214,6 +214,3 @@ st.pyplot(plt)  # Display plot in Streamlit
 
 if st.button(f'Top Airlines'):
     st.write(df_top_airline)
-
-
-##################################

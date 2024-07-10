@@ -145,7 +145,7 @@ plt.ylabel('Number of Departures')
 # Display plot 
 st.pyplot(plt)
 
-if st.button(f"Top Departure Airports"):
+if st.button(f"Departure Details"):
     st.write(df)
 
 st.markdown("<br>", unsafe_allow_html=True)
@@ -173,7 +173,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 # Display plot 
 st.pyplot(plt)  
 
-if st.button(f"Top Arrival Airports"):
+if st.button(f"Arrival Details"):
     st.write(df_top_arrival)
 
 
@@ -200,5 +200,5 @@ plt.ylabel('Number of Arrival')
 # Display plot
 st.pyplot(plt)  
 
-if st.button(f'Top Airlines'):
+if st.button(f'Airline Details'):
     st.write(df_top_airline)

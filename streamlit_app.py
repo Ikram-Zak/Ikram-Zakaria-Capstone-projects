@@ -13,8 +13,6 @@ st.set_page_config(
 )
 
 
-
-
 st.title("🛫 Flight Tracker")
 
 
@@ -24,6 +22,7 @@ st.image(image_path, use_column_width=True)
 
 
 ########### Connection to the db #############
+
 def db_connection():
     secrets = toml.load('.streamlit/secrets.toml')
 
@@ -40,7 +39,6 @@ def db_connection():
 
 ########### fetching data #################
 
-
 def fetch_data(query):
     conn = db_connection()
     cursor = conn.cursor()
@@ -53,7 +51,6 @@ def fetch_data(query):
 
 
 ################# metrics on the top #######################
-
 
 query_nb_flight = 'SELECT COUNT(id) AS total_num_flight FROM student.iz_aviationstack'
 data_nb_flight = fetch_data(query_nb_flight)
@@ -86,23 +83,18 @@ with cols[3]:
     ui.metric_card(title="Total Airline", content=data_nb_airline[0][0], key="card4")
 
 
-
-
 st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
 
 
-################ All data for report ##########
-
-
-
+################ All data for report ###################
 
 query_all = 'SELECT flight_dates, flight_statuses, flight_number, airline_names, departure_airports, arrival_airports FROM student.iz_aviationstack'
 data_all = fetch_data(query_all)
 df_all = pd.DataFrame(data_all, columns=['flight_dates', 'flight_statuses','flight_number', 'airline_names','departure_airports', 'arrival_airports'])
 
 
-#### Sidebar filter ####
+################ Sidebar filter ###################
 st.sidebar.subheader("Filter of the Data Report")
 
 # Date range selection
@@ -125,16 +117,18 @@ filtered_data = df_all[
     ((selected_airline == 'All Airlines') | (df_all['airline_names'] == selected_airline))
 ]
 
-# Display filtered data or all data if no filter applied
+# Display
 st.header('Data report')
+st.write('This report includes all flights data from July 2nd, 2024. You can filter the data using the options available in the sidebar.')
 st.write(filtered_data)
 
+st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
+################ Graphs ####################
 
-############## Graphs ####################
+###### Departure Airports ######
 
-
-st.header('Top 3 Departure Airports by Number of Departures')
-
+st.header('Top 3 Departure Airports')
 
 query_top_departure = 'SELECT departure_airports, COUNT(*) AS num_departures FROM student.iz_aviationstack GROUP BY departure_airports ORDER BY num_departures DESC LIMIT 3'
 data_top_departure = fetch_data(query_top_departure)
@@ -142,42 +136,31 @@ data_top_departure = fetch_data(query_top_departure)
 df = pd.DataFrame(data_top_departure, columns=['Airport', 'Num_Departures'])
 
 
-# Display data as a table
-
-
-
-
-
-
 # Plotting using seaborn
 plt.figure(figsize=(10, 6))
 sns.barplot(x='Airport', y='Num_Departures', data=df, hue='Airport', palette='viridis', legend=False)
 plt.xlabel('Airport')
 plt.ylabel('Number of Departures')
-##plt.title('Top 3 Departure Airports by Number of Departures')
+
+# Display plot 
 st.pyplot(plt)
 
 if st.button(f"Top Departure Airports"):
     st.write(df)
 
-
-
 st.markdown("<br>", unsafe_allow_html=True)
-##################################
+st.markdown("<br>", unsafe_allow_html=True)
 
+
+###### Arrival Airports ######
 
 st.header('Top 3 Arrival Airports')
 
 
 query_top_arrival = 'SELECT arrival_airports, COUNT(*) AS num_arrival FROM student.iz_aviationstack GROUP BY arrival_airports ORDER BY num_arrival DESC LIMIT 3'
 data_top_arrival = fetch_data(query_top_arrival)
-
-
-# Convert fetched data to Pandas DataFrame
 df_top_arrival = pd.DataFrame(data_top_arrival, columns=['Airport', 'num_arrival'])
 
-
-###st.write(df_top_arrival)
 
 
 # Plotting using seaborn
@@ -185,17 +168,21 @@ plt.figure(figsize=(10, 6))
 sns.barplot(x='Airport', y='num_arrival', data=df_top_arrival, hue='Airport', palette='viridis', legend=False)
 plt.xlabel('Airport')
 plt.ylabel('Number of Arrival')
-##plt.title('Top 3 Arrival Airports by Number of Arrival')
 st.markdown("<br>", unsafe_allow_html=True)
-st.pyplot(plt)  # Display plot in Streamlit
+
+# Display plot 
+st.pyplot(plt)  
 
 if st.button(f"Top Arrival Airports"):
     st.write(df_top_arrival)
 
 
 st.markdown("<br>", unsafe_allow_html=True)
-##################################
-st.header('Top 3 Airlines by Number of Departures')
+st.markdown("<br>", unsafe_allow_html=True)
+
+
+###### Airlines ######
+st.header('Top 3 Airlines')
 
 
 query_top_airline = 'SELECT airline_names, COUNT(*) AS num_airline FROM student.iz_aviationstack GROUP BY airline_names ORDER BY num_airline DESC LIMIT 3'
@@ -209,8 +196,9 @@ plt.figure(figsize=(10, 6))
 sns.barplot(x='Airline', y='num_airline', data=df_top_airline, hue='Airline', palette='viridis', legend=False)
 plt.xlabel('Airline')
 plt.ylabel('Number of Arrival')
-##plt.title('Top 5 Airline by Number of flight')
-st.pyplot(plt)  # Display plot in Streamlit
+
+# Display plot
+st.pyplot(plt)  
 
 if st.button(f'Top Airlines'):
     st.write(df_top_airline)

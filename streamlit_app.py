@@ -5,6 +5,7 @@ import pandas as pd
 import toml
 import psycopg2
 import streamlit_shadcn_ui as ui
+import os
 
 
 st.set_page_config(
@@ -22,18 +23,30 @@ st.image(image_path, use_column_width=True)
 
 
 ########### Connection to the db #############
+try:
+    secrets = toml.load(".streamlit/secrets.toml")
+except FileNotFoundError:
+    # Fallback to environment variables
+    secrets = {
+        "sql_user": os.getenv("SQL_USER"),
+        "sql_password": os.getenv("SQL_PASSWORD"),
+        "host": os.getenv("HOST"),
+        "port": int(os.getenv("PORT", 5432)),  # Default to 5432 if not set
+    }
 
 def db_connection():
-    secrets = toml.load('.streamlit/secrets.toml')
-
-
-    conn = psycopg2.connect(
-        database="pagila",
-        user= secrets['sql_user'],
-        password= secrets['sql_password'],
-        host= secrets['host'],
-        port=secrets['port']
-    )
+    conn = None
+    try:
+        conn = psycopg2.connect(
+            database="pagila",
+            user=secrets["sql_user"],
+            password=secrets["sql_password"],
+            host=secrets["host"],
+            port=secrets["port"]
+        )
+    except Exception as e:
+        st.error(f"Database connection failed: {e}")
+        return None
     return conn
 
 

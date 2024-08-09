@@ -1,6 +1,8 @@
-**Presentation:**
-This Streamlit application provides a Flight Tracker and Data Report for analyzing flight data including metrics, top departure and arrival airports, and top airlines.
 
+**Presentation:**
+ Visualize and analyze flight data, including key metrics, top airports, and airlines.
+
+View app on Streamlit Cloud [here](https://ikram-zakaria-capstone-projects-g3i2r0142is.streamlit.app/)
 
 **Features:**
 - Metrics Display: Shows key metrics such as total flights, unique airports, unique airlines, and total days.
